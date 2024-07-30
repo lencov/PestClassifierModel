@@ -6,11 +6,11 @@ from scipy.ndimage import label
 from scipy.stats import mode
 
 # Load the trained model
-model_save_path = r'C:\Users\Headwall\Desktop\BeetleClassifier\models\Beetle_Classifier_CDA.pkl'
+model_save_path = r'C:\Users\Headwall\Desktop\PestClassifier\models\LDA_BeetleClassifierV1_with_CBB.pkl'
 model = joblib.load(model_save_path)
 
-# Load the hyperspectral image
-hdr_path = r'C:\Users\Headwall\Desktop\BeetleClassifier\data\TNB\newImage3\data.hdr'
+# Load the hyperspectral image. Make sure that within the same directory, there exists the data binary files. The other files might be required as well so just make sure all the files you get from taking the image are present
+hdr_path = r'C:\Users\Headwall\Desktop\PestClassifier\data\raw\AND\newImage4\data.hdr'
 img = open_image(hdr_path)
 data = img.load()
 
@@ -38,7 +38,8 @@ beetle_counts = {
     'CRYPH': 0,
     'ERUD': 0,
     'AND': 0,
-    'TNB': 0
+    'TNB': 0,
+    'CBB': 0
 }
 
 # Mapping from label to beetle name
@@ -46,13 +47,14 @@ label_to_beetle = {
     -102: 'CRYPH',
     -103: 'ERUD',
     -104: 'AND',
-    -105: 'TNB'
+    -105: 'TNB',
+    -106: 'CBB'
 }
 
 # Process each cluster
 for i in range(1, num_features + 1):
     coordinates = np.where(labeled == i)
-    if coordinates[0].size > 6:  # Check size of the cluster
+    if coordinates[0].size > 10:  # Check size of the cluster. Adjust this number to change the minimum pixel cluster size
         cluster_labels = predicted_labels[coordinates]
         if cluster_labels.size > 0:
             cluster_mode = mode(cluster_labels)
@@ -70,4 +72,4 @@ for i in range(1, num_features + 1):
 print("Beetle counts:", beetle_counts)
 
 # Save the predicted labels if needed
-np.savetxt('predicted_labels.csv', predicted_labels, delimiter=',')
+#np.savetxt('predicted_labels.csv', predicted_labels, delimiter=',')

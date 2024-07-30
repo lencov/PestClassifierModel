@@ -15,8 +15,8 @@ logging.info('Script started')
 
 # Load the features and labels
 logging.info('Loading features and labels...')
-features_path = r'C:\Users\Headwall\Desktop\BeetleClassifier\trainingData\features.csv'
-labels_path = r'C:\Users\Headwall\Desktop\BeetleClassifier\trainingData\balanced_labels.csv'
+features_path = r'C:\Users\Headwall\Desktop\BeetleClassifier\labeledData\features.csv'
+labels_path = r'C:\Users\Headwall\Desktop\BeetleClassifier\labeledData\labels.csv'
 
 features = pd.read_csv(features_path, header=None).transpose()
 labels = pd.read_csv(labels_path, header=None).values.ravel()
@@ -52,7 +52,7 @@ print('Classification Report:')
 print(report)
 
 # Save the trained model in a specific directory
-model_save_path = r'C:\Users\Headwall\Desktop\BeetleClassifier\Beetle_Classifier_CDA.pkl'
+model_save_path = r'C:\Users\Headwall\Desktop\PestClassifier\models\CDA_BeetleClassifierV2.pkl'
 joblib.dump(clf, model_save_path)
 logging.info(f'Model saved to {model_save_path}')
 

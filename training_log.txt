@@ -1,0 +1,76 @@
+2024-07-29 14:34:09,731 Script started
+2024-07-29 14:34:12,992 Accuracy: 0.9212876427829699
+2024-07-29 14:34:12,992 Classification Report:
+              precision    recall  f1-score   support
+
+      -106.0       0.92      0.81      0.86       889
+      -105.0       0.92      0.94      0.93      1914
+      -104.0       0.94      0.87      0.90       927
+      -103.0       0.82      0.71      0.76       557
+      -102.0       0.94      0.96      0.95      4336
+      -101.0       0.89      1.00      0.94      1007
+
+    accuracy                           0.92      9630
+   macro avg       0.91      0.88      0.89      9630
+weighted avg       0.92      0.92      0.92      9630
+
+2024-07-29 14:34:12,994 Model saved to C:\Users\Headwall\Desktop\BeetleClassifier\LDA_BeetleClassifierV1.pkl
+2024-07-29 14:34:12,994 Script completed in 0:00:03.262923
+2024-07-29 14:37:39,516 Script started
+2024-07-29 14:37:39,516 Loading features and labels...
+2024-07-29 14:37:40,614 Features and labels loaded
+2024-07-29 14:37:40,614 Splitting data into training and testing sets...
+2024-07-29 14:37:40,632 Data split completed
+2024-07-29 14:37:40,632 Starting model fitting...
+2024-07-29 14:37:40,965 Model fitting completed
+2024-07-29 14:37:40,981 Accuracy: 0.9907011812013069
+2024-07-29 14:37:40,981 Classification Report:
+2024-07-29 14:37:40,981               precision    recall  f1-score   support
+
+  Background       1.00      0.99      1.00      2053
+       CRYPH       1.00      0.98      0.99       381
+        ERUD       0.97      1.00      0.98       148
+         AND       1.00      0.95      0.97       184
+         TNB       0.97      1.00      0.99      1213
+
+    accuracy                           0.99      3979
+   macro avg       0.99      0.98      0.99      3979
+weighted avg       0.99      0.99      0.99      3979
+
+2024-07-29 14:37:40,981 Model saved to C:\Users\Headwall\Desktop\PestClassifier\models\CDA_BeetleClassifierV2.pkl
+2024-07-29 14:37:40,981 Script completed in 0:00:01.465460
+2024-07-29 14:38:59,681 Script started
+2024-07-29 14:39:02,153 Accuracy: 0.9405486055319637
+2024-07-29 14:39:02,153 Classification Report:
+              precision    recall  f1-score   support
+
+      -105.0       0.94      0.94      0.94      1885
+      -104.0       0.95      0.85      0.90       918
+      -103.0       0.83      0.73      0.78       551
+      -102.0       0.96      0.97      0.96      4335
+      -101.0       0.92      1.00      0.96      1024
+
+    accuracy                           0.94      8713
+   macro avg       0.92      0.90      0.91      8713
+weighted avg       0.94      0.94      0.94      8713
+
+2024-07-29 14:39:02,153 Model saved to C:\Users\Headwall\Desktop\PestClassifier\models\LDA_BeetleClassifierV1.pkl
+2024-07-29 14:39:02,153 Script completed in 0:00:02.471365
+2024-07-29 14:40:02,715 Script started
+2024-07-29 14:40:05,666 Accuracy: 0.9212876427829699
+2024-07-29 14:40:05,666 Classification Report:
+              precision    recall  f1-score   support
+
+      -106.0       0.92      0.81      0.86       889
+      -105.0       0.92      0.94      0.93      1914
+      -104.0       0.94      0.87      0.90       927
+      -103.0       0.82      0.71      0.76       557
+      -102.0       0.94      0.96      0.95      4336
+      -101.0       0.89      1.00      0.94      1007
+
+    accuracy                           0.92      9630
+   macro avg       0.91      0.88      0.89      9630
+weighted avg       0.92      0.92      0.92      9630
+
+2024-07-29 14:40:05,681 Model saved to C:\Users\Headwall\Desktop\PestClassifier\models\LDA_BeetleClassifierV1_with_CBB.pkl
+2024-07-29 14:40:05,681 Script completed in 0:00:02.966751

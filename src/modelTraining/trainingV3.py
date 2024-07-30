@@ -14,7 +14,7 @@ logging.basicConfig(filename='training_log.txt', level=logging.INFO, format='%(a
 logging.info('Script started')
 
 # Define the path to the training data
-data_directory = r'C:\Users\Headwall\Desktop\BeetleClassifier\trainingData'
+data_directory = r'C:\Users\Headwall\Desktop\PestClassifier\data\processed'
 data_files = glob.glob(data_directory + '/*.csv')
 
 # Combine all CSV files into one DataFrame
@@ -63,7 +63,7 @@ print(f'Accuracy: {accuracy}')
 print('Classification Report:\n', report)
 
 # Save the trained model
-model_save_path = r'C:\Users\Headwall\Desktop\BeetleClassifier\New_Beetle_Classifier_CDA.pkl'
+model_save_path = r'C:\Users\Headwall\Desktop\PestClassifier\models\LDA_BeetleClassifierV1_with_CBB.pkl'
 joblib.dump(clf, model_save_path)
 logging.info(f'Model saved to {model_save_path}')
 
