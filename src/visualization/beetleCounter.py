@@ -36,8 +36,6 @@ def update_spreadsheet(file_path, new_entry):
         df.to_excel(new_file_path)
         print(f"Data saved successfully to {new_file_path} instead.")
 
-# Load the trained model- CDA_BeetleClassiferV2 is trained on labeled data from perClassMira and is like 99% accurate with CRYPH, ERUD, and AND but thinks that all TNB is ERUD. It
-# is also not trained on any data for CBB. LDA_BeetleClassifierV1_with_CBB is like 93% accurate with everything
 model_save_path = r'C:\Users\Headwall\Desktop\PestClassifier\models\CDA_BeetleClassifierV5.pkl'
 model = joblib.load(model_save_path)
 
