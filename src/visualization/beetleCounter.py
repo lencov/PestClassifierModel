@@ -19,29 +19,30 @@ def update_spreadsheet(file_path, new_entry):
         df = pd.read_excel(file_path, index_col=0)
     else:
         # Create a new DataFrame if the spreadsheet does not exist
-        columns = ['CRYPH', 'ERUD', 'AND', 'TNB', 'CBB', 'File Path']
+        columns = ['CRYPH', 'AND', 'ERUD', 'TNB', 'CBB', 'File Path']
         df = pd.DataFrame(columns=columns)
 
     # Append the new entry to the DataFrame
     new_entry_df = pd.DataFrame([new_entry])
     df = pd.concat([df, new_entry_df], ignore_index=True)
 
-    # Calculate the total counts
-    total_counts = df.sum(numeric_only=True)
-    total_counts['File Path'] = 'Total'
+    # Attempt to save the updated DataFrame to the spreadsheet
+    try:
+        df.to_excel(file_path)
+    except PermissionError as e:
+        print(f"PermissionError: {e}")
+        print("Ensure the file is closed and you have write permissions to the directory.")
+        new_file_path = file_path.replace('.xlsx', '_new.xlsx')
+        df.to_excel(new_file_path)
+        print(f"Data saved successfully to {new_file_path} instead.")
 
-    # Insert the total counts at the top of the DataFrame
-    df = pd.concat([total_counts.to_frame().T, df], ignore_index=True)
-
-    # Save the updated DataFrame to the spreadsheet
-    df.to_excel(file_path)
-
-# Load the trained model
-model_save_path = r'C:\Users\Headwall\Desktop\PestClassifier\models\LDA_BeetleClassifierV1_with_CBB.pkl'
+# Load the trained model- CDA_BeetleClassiferV2 is trained on labeled data from perClassMira and is like 99% accurate with CRYPH, ERUD, and AND but thinks that all TNB is ERUD. It
+# is also not trained on any data for CBB. LDA_BeetleClassifierV1_with_CBB is like 93% accurate with everything
+model_save_path = r'C:\Users\Headwall\Desktop\PestClassifier\models\CDA_BeetleClassifierV4.pkl'
 model = joblib.load(model_save_path)
 
 # Load the hyperspectral image. Make sure that within the same directory, there exists the data binary files. The other files might be required as well so just make sure all the files you get from taking the image are present
-hdr_path = r'C:\Users\Headwall\Desktop\PestClassifier\data\raw\CBB\data.hdr'
+hdr_path = r'C:\Users\Headwall\Desktop\PestClassifier\data\raw\TNB\newImage3\data.hdr'
 img = open_image(hdr_path)
 data = img.load()
 
@@ -67,8 +68,8 @@ labeled, num_features = label(predicted_labels != -101, structure=structure)
 # Initialize counts
 beetle_counts = {
     'CRYPH': 0,
-    'ERUD': 0,
     'AND': 0,
+    'ERUD': 0,
     'TNB': 0,
     'CBB': 0
 }
@@ -76,8 +77,8 @@ beetle_counts = {
 # Mapping from label to beetle name
 label_to_beetle = {
     -102: 'CRYPH',
-    -103: 'ERUD',
-    -104: 'AND',
+    -103: 'AND',
+    -104: 'ERUD',
     -105: 'TNB',
     -106: 'CBB'
 }
@@ -85,7 +86,7 @@ label_to_beetle = {
 # Process each cluster
 for i in range(1, num_features + 1):
     coordinates = np.where(labeled == i)
-    if coordinates[0].size > 10:  # Check size of the cluster. Adjust this number to change the minimum pixel cluster size
+    if coordinates[0].size > 6:  # Check size of the cluster. Adjust this number to change the minimum pixel cluster size
         cluster_labels = predicted_labels[coordinates]
         if cluster_labels.size > 0:
             cluster_mode = mode(cluster_labels)

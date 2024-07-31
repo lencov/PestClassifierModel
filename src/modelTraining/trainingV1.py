@@ -15,8 +15,8 @@ logging.info('Script started')
 
 # Load the features and labels
 logging.info('Loading features and labels...')
-features_path = r'C:\Users\Headwall\Desktop\BeetleClassifier\labeledData\features.csv'
-labels_path = r'C:\Users\Headwall\Desktop\BeetleClassifier\labeledData\labels.csv'
+features_path = r'C:\Users\Headwall\Desktop\PestClassifier\data\labeledData\features.csv'
+labels_path = r'C:\Users\Headwall\Desktop\PestClassifier\data\labeledData\labels.csv'
 
 features = pd.read_csv(features_path, header=None).transpose()
 labels = pd.read_csv(labels_path, header=None).values.ravel()
@@ -41,7 +41,7 @@ y_pred = clf.predict(X_test)
 
 # Evaluate the model
 accuracy = accuracy_score(y_test, y_pred)
-report = classification_report(y_test, y_pred, target_names=['Background', 'CRYPH', 'ERUD', 'AND', 'TNB'])
+report = classification_report(y_test, y_pred, target_names=['Background', 'CRYPH', 'ERUD', 'AND', 'TNB', 'CBB'])
 
 logging.info(f'Accuracy: {accuracy}')
 logging.info('Classification Report:')
@@ -52,7 +52,7 @@ print('Classification Report:')
 print(report)
 
 # Save the trained model in a specific directory
-model_save_path = r'C:\Users\Headwall\Desktop\PestClassifier\models\CDA_BeetleClassifierV2.pkl'
+model_save_path = r'C:\Users\Headwall\Desktop\PestClassifier\models\CDA_BeetleClassifierV4.pkl'
 joblib.dump(clf, model_save_path)
 logging.info(f'Model saved to {model_save_path}')
 
