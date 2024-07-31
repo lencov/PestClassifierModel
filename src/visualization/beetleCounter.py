@@ -38,11 +38,11 @@ def update_spreadsheet(file_path, new_entry):
 
 # Load the trained model- CDA_BeetleClassiferV2 is trained on labeled data from perClassMira and is like 99% accurate with CRYPH, ERUD, and AND but thinks that all TNB is ERUD. It
 # is also not trained on any data for CBB. LDA_BeetleClassifierV1_with_CBB is like 93% accurate with everything
-model_save_path = r'C:\Users\Headwall\Desktop\PestClassifier\models\CDA_BeetleClassifierV4.pkl'
+model_save_path = r'C:\Users\Headwall\Desktop\PestClassifier\models\CDA_BeetleClassifierV5.pkl'
 model = joblib.load(model_save_path)
 
 # Load the hyperspectral image. Make sure that within the same directory, there exists the data binary files. The other files might be required as well so just make sure all the files you get from taking the image are present
-hdr_path = r'C:\Users\Headwall\Desktop\PestClassifier\data\raw\TNB\newImage3\data.hdr'
+hdr_path = r'C:\Users\Headwall\Desktop\PestClassifier\data\raw\Combined\SurpriseMix_image2\data.hdr'
 img = open_image(hdr_path)
 data = img.load()
 
@@ -76,10 +76,10 @@ beetle_counts = {
 
 # Mapping from label to beetle name
 label_to_beetle = {
-    -102: 'CRYPH',
+    -102: 'TNB',
     -103: 'AND',
     -104: 'ERUD',
-    -105: 'TNB',
+    -105: 'CRYPH',
     -106: 'CBB'
 }
 
