@@ -6,20 +6,21 @@ from scipy.ndimage import label
 from scipy.stats import mode
 import pandas as pd
 import os
+from datetime import datetime
 
 def update_spreadsheet(file_path, new_entry):
     """
-    Update the spreadsheet with the new beetle counts and file path.
+    Update the spreadsheet with the new beetle counts, file path, and timestamp.
 
     :param file_path: Path to the spreadsheet
-    :param new_entry: Dictionary containing the beetle counts and file path
+    :param new_entry: Dictionary containing the beetle counts, file path, and timestamp
     """
     # Check if the spreadsheet exists
     if os.path.exists(file_path):
         df = pd.read_excel(file_path, index_col=0)
     else:
         # Create a new DataFrame if the spreadsheet does not exist
-        columns = ['CRYPH', 'AND', 'ERUD', 'TNB', 'CBB', 'File Path']
+        columns = ['Date', 'Time', 'CRYPH', 'AND', 'ERUD', 'TNB', 'CBB', 'File Path']
         df = pd.DataFrame(columns=columns)
 
     # Append the new entry to the DataFrame
@@ -40,7 +41,7 @@ model_save_path = r'C:\Users\Headwall\Desktop\PestClassifier\models\CDA_BeetleCl
 model = joblib.load(model_save_path)
 
 # Load the hyperspectral image. Make sure that within the same directory, there exists the data binary files. The other files might be required as well so just make sure all the files you get from taking the image are present
-hdr_path = r'C:\Users\Headwall\Desktop\PestClassifier\data\raw\Combined\SurpriseMix_image2\data.hdr'
+hdr_path = r'C:\Users\Headwall\Desktop\PestClassifier\data\raw\Combined\SurpriseMix_image1\data.hdr'
 img = open_image(hdr_path)
 data = img.load()
 
@@ -101,10 +102,17 @@ for i in range(1, num_features + 1):
 
 print("Beetle counts:", beetle_counts)
 
+# Get the current date and time
+now = datetime.now()
+current_date = now.strftime('%Y-%m-%d')
+current_time = now.strftime('%H:%M:%S')
+
 # Prepare the new entry for the spreadsheet
 new_entry = beetle_counts.copy()
+new_entry['Date'] = current_date
+new_entry['Time'] = current_time
 new_entry['File Path'] = hdr_path
 
 # Update the spreadsheet
-spreadsheet_path = r'C:\Users\Headwall\Desktop\PestClassifier\beetle_counts.xlsx'
+spreadsheet_path = r'C:\Users\Headwall\Desktop\PestClassifier\Beetle_Counts.xlsx'
 update_spreadsheet(spreadsheet_path, new_entry)

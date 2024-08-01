@@ -1,0 +1,146 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from spectral import open_image
+import joblib
+from scipy.ndimage import label
+from scipy.stats import mode
+import pandas as pd
+import os
+from datetime import datetime
+
+def update_spreadsheet(file_path, new_entry):
+    """
+    Update the spreadsheet with the new beetle counts, file path, and timestamp.
+
+    :param file_path: Path to the spreadsheet
+    :param new_entry: Dictionary containing the beetle counts, file path, and timestamp
+    """
+    # Check if the spreadsheet exists
+    if os.path.exists(file_path):
+        df = pd.read_excel(file_path, index_col=0)
+    else:
+        # Create a new DataFrame if the spreadsheet does not exist
+        columns = ['Date', 'Time', 'CRYPH', 'AND', 'ERUD', 'TNB', 'CBB', 'File Path']
+        df = pd.DataFrame(columns=columns)
+
+    # Append the new entry to the DataFrame
+    new_entry_df = pd.DataFrame([new_entry])
+    df = pd.concat([df, new_entry_df], ignore_index=True)
+
+    # Attempt to save the updated DataFrame to the spreadsheet
+    try:
+        df.to_excel(file_path)
+    except PermissionError as e:
+        print(f"PermissionError: {e}")
+        print("Ensure the file is closed and you have write permissions to the directory.")
+        new_file_path = file_path.replace('.xlsx', '_new.xlsx')
+        df.to_excel(new_file_path)
+        print(f"Data saved successfully to {new_file_path} instead.")
+
+def process_image(hdr_path, model, spreadsheet_path):
+    """
+    Process a single hyperspectral image, predict beetle counts, and update the spreadsheet.
+
+    :param hdr_path: Path to the hyperspectral image
+    :param model: Trained model for prediction
+    :param spreadsheet_path: Path to the spreadsheet for updating results
+    """
+    img = open_image(hdr_path)
+    data = img.load()
+
+    # Reshape the data for prediction
+    num_bands = data.shape[2]
+    num_pixels = data.shape[0] * data.shape[1]
+    reshaped_data = data.reshape((num_pixels, num_bands))
+
+    # Predict labels for each pixel
+    predicted_labels = model.predict(reshaped_data)
+    predicted_labels = predicted_labels.reshape((data.shape[0], data.shape[1]))
+
+    # Visualize the predicted labels
+    plt.imshow(predicted_labels, cmap='jet')
+    plt.colorbar()
+    plt.title('Predicted Labels')
+    plt.show()
+
+    # Label connected components
+    structure = np.ones((3, 3), dtype=np.int32)  # Define connectivity
+    labeled, num_features = label(predicted_labels != -101, structure=structure)
+
+    # Initialize counts
+    beetle_counts = {
+        'CRYPH': 0,
+        'AND': 0,
+        'ERUD': 0,
+        'TNB': 0,
+        'CBB': 0
+    }
+
+    # Mapping from label to beetle name
+    label_to_beetle = {
+        -102: 'TNB',
+        -103: 'AND',
+        -104: 'ERUD',
+        -105: 'CRYPH',
+        -106: 'CBB'
+    }
+
+    # Process each cluster
+    for i in range(1, num_features + 1):
+        coordinates = np.where(labeled == i)
+        if coordinates[0].size > 6:  # Check size of the cluster. Adjust this number to change the minimum pixel cluster size
+            cluster_labels = predicted_labels[coordinates]
+            if cluster_labels.size > 0:
+                cluster_mode = mode(cluster_labels)
+                most_common = cluster_mode.mode if cluster_mode.mode.size > 0 else cluster_mode.mode
+                if isinstance(most_common, np.ndarray):
+                    most_common = most_common.item()  # Convert numpy array to Python scalar if necessary
+                count = cluster_mode.count if cluster_mode.count.size > 0 else 'N/A'
+                print(f"Cluster {i}: Most common label is {most_common} with count {count}")
+                if most_common is not None and most_common in label_to_beetle:
+                    beetle_name = label_to_beetle[most_common]
+                    beetle_counts[beetle_name] += 1
+            else:
+                print(f"Cluster {i}: Cluster labels are empty")
+
+    print("Beetle counts:", beetle_counts)
+
+    # Get the current date and time
+    now = datetime.now()
+    current_date = now.strftime('%Y-%m-%d')
+    current_time = now.strftime('%H:%M:%S')
+
+    # Prepare the new entry for the spreadsheet
+    new_entry = beetle_counts.copy()
+    new_entry['Date'] = current_date
+    new_entry['Time'] = current_time
+    new_entry['File Path'] = hdr_path
+
+    # Update the spreadsheet
+    update_spreadsheet(spreadsheet_path, new_entry)
+
+def process_all_images_in_folder(root_folder, model_save_path, spreadsheet_path):
+    """
+    Process all hyperspectral images in a folder and its subfolders.
+
+    :param root_folder: Root folder to search for hyperspectral images
+    :param model_save_path: Path to the trained model
+    :param spreadsheet_path: Path to the spreadsheet for updating results
+    """
+    # Load the trained model
+    model = joblib.load(model_save_path)
+
+    # Walk through the directory structure
+    for dirpath, _, filenames in os.walk(root_folder):
+        for file in filenames:
+            if file.endswith('data.hdr'):
+                hdr_path = os.path.join(dirpath, file)
+                print(f"Processing file: {hdr_path}")
+                process_image(hdr_path, model, spreadsheet_path)
+
+# Paths
+root_folder = r'C:\Users\Headwall\Desktop\PestClassifier\data\raw'
+model_save_path = r'C:\Users\Headwall\Desktop\PestClassifier\models\CDA_BeetleClassifierV5.pkl'
+spreadsheet_path = r'C:\Users\Headwall\Desktop\PestClassifier\Beetle_Counts_MultiImage.xlsx'
+
+process_all_images_in_folder(root_folder, model_save_path, spreadsheet_path)
